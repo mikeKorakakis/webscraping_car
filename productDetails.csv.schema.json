@@ -1,0 +1,92 @@
+{
+  "fields": [
+    {
+      "name": "name:el",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "name:en",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "slug",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "assets",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "facets:el",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "facets:en",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "optionGroups",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "optionValues",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "sku",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "price",
+      "type": "number",
+      "format": "default"
+    },
+    {
+      "name": "taxCategory",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "stockOnHand",
+      "type": "integer",
+      "format": "default"
+    },
+    {
+      "name": "product:car_url",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "trackInventory",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "variantAssets",
+      "type": "string",
+      "format": "default"
+    },
+    {
+      "name": "variantFacets",
+      "type": "string",
+      "format": "default"
+    }
+  ],
+  "missingValues": [
+    ""
+  ]
+}

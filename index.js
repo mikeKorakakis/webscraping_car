@@ -1,23 +1,23 @@
-const axios = require("axios");
 const cheerio = require("cheerio");
 const fs = require("fs");
-const request = require("request");
 var Queue = require("bull");
-let scrapeProductLinksBool = false;
+var slugify = require("slugify");
+let createCsvHeader = true,
+	scrapeProductLinksBool = !true;
 scrapeProductDetailsBool = true;
-pages = 2;
+pages = 42;
+const {
+	download,
+	spliceSlice,
+	getValue,
+	getDescription,
+	getCondition,
+	getFits,
+	fetchHtml,
+} = require("./helpers.js");
 
-var download = function (uri, filename, callback) {
-	request.head(uri, function (err, res, body) {
-		// console.log("content-type:", res.headers["content-type"]);
-		// console.log("content-length:", res.headers["content-length"]);
-
-		request(uri)
-			.pipe(fs.createWriteStream("images/" + filename))
-			.on("close", callback);
-	});
-};
-
+const csvHeader =
+	"name:el,name:en,slug,description,assets,facets:el,facets:en,optionGroups,optionValues,sku,price,taxCategory,stockOnHand,product:car_url,product:sku,trackInventory,variantAssets,variantFacets\n";
 const baseUrl = "https://zenone.car.gr";
 const basePaginationUrl = "https://zenone.car.gr/parts/?pg=";
 const paginationLinks = Array.from({ length: pages }, (_, i) => i).map(
@@ -27,24 +27,22 @@ const paginationLinks = Array.from({ length: pages }, (_, i) => i).map(
 var productLinkQueue = new Queue("productLink queue", "redis://127.0.0.1:6379");
 var productDetailsQueue = new Queue("models queue", "redis://127.0.0.1:6379");
 
-const fetchHtml = async (url) => {
-	try {
-		const { data } = await axios.get(url);
-		return data;
-	} catch (error) {
-		console.error("Error", error.message);
-	}
-	//   return cheerio.load(data)
-};
+if (createCsvHeader) {
+	fs.appendFile("productDetails.csv", csvHeader, function (err) {
+		if (err) return console.log(err);
+	});
+}
+
 const processProductLinks = async (url) => {
 	const html = await fetchHtml(url);
-
+	if (!html) return;
 	const selector = cheerio.load(html);
 	var links = [];
 
-	const searchResults = selector("a.row_clsfd");
+	const searchResults = selector("a.row-anchor");
 	searchResults.each((idx, value) => {
 		var link = selector(value).attr("href");
+		console.log("link: ", link);
 		links.push(baseUrl + link);
 	});
 
@@ -111,155 +109,108 @@ const processProductDetails = async (url) => {
 
 	const selector = cheerio.load(html);
 
-	let product = {};
-
-	const name =
-		selector(".hidden-xs strong").first().text() &&
-		selector(".hidden-xs strong")
-			.first()
-			.text()
-			.trim()
-			.replace(/\s+/g, " ");
-	const car_id =
-		selector(
-			".vpartial-page-container tr:contains('Νούμερο αγγελίας:') td:nth-of-type(2)"
-		)
-			.first()
-			.text() &&
-		selector(
-			".vpartial-page-container tr:contains('Νούμερο αγγελίας:') td:nth-of-type(2)"
-		)
-			.first()
-			.text()
-			.trim()
-			.replace(/\s+/g, " ");
-
-	const condition =
-		selector(
-			".vpartial-page-container tr:contains('Κατάσταση:') td:nth-of-type(2)"
-		)
-			.first()
-			.text() &&
-		selector(
-			".vpartial-page-container tr:contains('Κατάσταση:') td:nth-of-type(2)"
-		)
-			.first()
-			.text()
-			.trim()
-			.replace(/\s+/g, " ");
-	const category =
-		selector(
-			".vpartial-page-container tr:contains('Κατηγορία:') td:nth-of-type(2)"
-		)
-			.first()
-			.text() &&
-		selector(
-			".vpartial-page-container tr:contains('Κατηγορία:') td:nth-of-type(2)"
-		)
-			.first()
-			.text()
-			.trim()
-			.replace(/\s+/g, " ");
-	const manufacturer =
-		selector(".vpartial-page-container span[itemprop='name']")
-			.first()
-			.text() &&
-		selector(".vpartial-page-container span[itemprop='name']")
-			.first()
-			.text()
-			.trim()
-			.replace(/\s+/g, " ");
-	const model =
-		selector(".vpartial-page-container span[itemprop='model']")
-			.first()
-			.text() &&
-		selector(".vpartial-page-container span[itemprop='model']")
-			.first()
-			.text()
-			.trim()
-			.replace(/\s+/g, " ");
-	const fits = selector("li[itemprop='isAccessoryOrSparePartFor']");
-	const fitsArr = [];
-	fits.each(
-		(index, item) =>
-        selector(item)
-        .text() &&
-			fitsArr.push(
-				selector(item)
-					.text()
-					.replace(/(\r\n|\n|\r)/gm, "")
-					.replace(/\s+/g, " ")
-			)
-	);
-
-	const aftermarket =
-		selector(
-			".vpartial-page-container tr:contains('Aftermarket ή εργοστασιακός κωδικός:') td:nth-of-type(2)"
-		)
-			.first()
-			.text() &&
-		selector(
-			".vpartial-page-container tr:contains('Aftermarket ή εργοστασιακός κωδικός:') td:nth-of-type(2)"
-		)
-			.first()
-			.text()
-			.trim()
-			.replace(/\s+/g, " ");
-	const car_url =
-		selector(
-			".vpartial-page-container tr:contains('Σύνδεσμος:') td:nth-of-type(2)"
-		)
-			.first()
-			.text() &&
-		selector(
-			".vpartial-page-container tr:contains('Σύνδεσμος:') td:nth-of-type(2)"
-		)
-			.first()
-			.text()
-			.trim()
-			.replace(/\s+/g, " ");
-	const description =
-		selector("p#desc_message").first().text() &&
-		selector("p#desc_message")
-			.first()
-			.text()
-			.replace("Λιγότερα", "")
-			.trim();
-
-	const image = selector(".slick-img-hover img");
+	let imageSelector = selector("img.thumb-img");
 	const imageArr = [];
-	image.each(
-		(index, item) => selector(item) && imageArr.push(selector(item).attr("data-lazy"))
-	);
-	imageArr.forEach((item) => {
+	imageSelector.each((index, item) => {
+		const src = selector(item) && selector(item).attr("src");
+		const srcBig = spliceSlice(src, src.lastIndexOf("v"), 1, "z");
 		download(
-			"https:" + item,
-			item.slice(item.lastIndexOf("/") + 1),
+			srcBig,
+			srcBig.slice(srcBig.lastIndexOf("/") + 1),
 			function () {}
 		);
+		imageArr.push(
+			srcBig.replace(
+				"https://static.car.gr/",
+				"../../../../../src/mock-data/images/"
+			)
+		);
 	});
+	let image = "";
+	if (imageArr.length === 0) {
+		imageSelector = selector("img.thumb-img");
+		const src = selector(item) && selector(item).attr("src");
+		download(src, src.slice(srcBig.lastIndexOf("/") + 1), function () {});
+		image = src;
+	} else {
+		image = imageArr.join("|");
+	}
 
-	product.car_id = car_id;
-	product.name = name;
-	product.condition = condition;
-	product.category = category;
-	product.manufacturer = manufacturer;
-	product.model = model;
-	product.fits = fitsArr;
-	product.aftermarket = aftermarket;
-	product.car_url = car_url;
-	product.description = description;
-	product.image = imageArr;
+	const title = getValue("Τίτλος", selector).replaceAll('"', "'");
+	let price = getValue("Τιμή", selector);
+	price = price.split(" €")[0].replaceAll(",", ".");
+	price = (Number(price) / 1.24).toFixed(2);
+	const aftermarket_code = getValue("Εργοστασιακός κωδικός", selector);
 
-	// console.log(JSON.stringify(product))
-	// console.log(product);
+	const slug = `no_code_${slugify(title.substring(0, 30), { lower: true })}`;
+	const description = getDescription(selector).replaceAll('"', "'");
 
-	fs.appendFile(
-		"productDetails.csv",
-		JSON.stringify(product),
-		function (err) {
-			if (err) return console.log(err);
-		}
-	);
+	const modelArr = [];
+	const manufacturerArr = [];
+	const fits = getFits(selector);
+	fits.forEach((item, index) => {
+		if (!modelArr.includes("model:" + item)) modelArr.push("model:" + item);
+		const man = item.split(" ")[0];
+		if (!manufacturerArr.includes("manufacturer:" + man))
+			manufacturerArr.push("manufacturer:" + man);
+	});
+	let model = modelArr.join("|");
+	let manufacturer = manufacturerArr.join("|");
+	let category = getValue("Κατηγορία", selector);
+	if (category.includes(",")) {
+		category = category.split(",");
+		const categoryArr = [];
+		category = category.forEach((item) => {
+			categoryArr.push("category:" + item.trim());
+		});
+		category = categoryArr.join("|");
+	} else {
+		category = "category:" + category;
+	}
+	let brand = getValue("Κατασκευαστής", selector)
+		.replace(`- ${aftermarket_code}`, "")
+		.trim();
+	brand = "brand:" + brand;
+	let condition = getCondition(selector);
+	condition = "condition:" + condition;
+
+	let facets =
+		category +
+		"|" +
+		brand +
+		"|" +
+		condition +
+		"|" +
+		model +
+		"|" +
+		manufacturer;
+	facets = facets.replaceAll("||", "|");
+	if (facets.lastIndexOf("|") === facets.length - 1)
+		facets = facets.slice(0, facets.length - 1);
+
+	const car_url = getValue("Σύνδεσμος", selector);
+
+	const fileContent = `"${title}","${title}",${slug},"${description}",${image},${facets},${facets},,,${aftermarket_code},"${price}",,100,${car_url},${aftermarket_code},,,\n`;
+	// console.log("filecontent",fileContent);
+
+	// console.log("name:el",title)
+	// console.log("name:en",title)
+	// console.log("slug",aftermarket_code)
+	// console.log("description",description)
+	// console.log("assets",image)
+	// console.log("facets:el",facets)
+	// console.log("facets:en",facets)
+	// console.log("optionGroups",      )
+	// console.log("optionValues",    )
+	// console.log("sku",aftermarket_code)
+	// console.log("price",price)
+	// console.log("taxCategory",    )
+	// console.log("stockOnHand",100)
+	// console.log("trackInventory",    )
+	// console.log("variantAssets",    )
+	// console.log("variantFacets",    )
+	fs.appendFile("productDetails.csv", fileContent, function (err) {
+		if (err) return console.log(err);
+	});
 };
 scrapeProductDetailsBool && scrapeProductDetails();
