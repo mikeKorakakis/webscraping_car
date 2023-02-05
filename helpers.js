@@ -93,15 +93,31 @@ const getFits = (selector) => {
 
 const fetchHtml = async (url) => {
 	try {
-        sleep(1000)
+        sleep(3000)
 		const { data } = await axios.get(url);
+        if (url.includes("https://zenone.car.gr/parts/?pg="))
+			fs.appendFile(
+				"productLinksDone.csv",
+				url.toString() + ",",
+				function (err) {
+					if (err) return console.log(err);
+				}
+			);
+		else
+			fs.appendFile(
+				"productDetailsDone.csv",
+				url.toString() + ",",
+				function (err) {
+					if (err) return console.log(err);
+				}
+			);
 		return data;
 	} catch (error) {
         console.error("Error", error.message);
 		if (url.includes("https://zenone.car.gr/parts/?pg="))
 			fs.appendFile(
 				"productLinksError.csv",
-				url.toString(),
+				url.toString() + ",",
 				function (err) {
 					if (err) return console.log(err);
 				}
@@ -109,7 +125,7 @@ const fetchHtml = async (url) => {
 		else
 			fs.appendFile(
 				"productDetailsError.csv",
-				url.toString(),
+				url.toString()+ ",",
 				function (err) {
 					if (err) return console.log(err);
 				}

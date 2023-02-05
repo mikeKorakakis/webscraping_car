@@ -1,7 +1,4 @@
-*.jpg
-*.png
-*.jpeg
-*.svg
 
-*.csv
+
+
 node_modules/

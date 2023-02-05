@@ -1,172 +1,166 @@
 {
   "columns": [
     {
-      "width": 51,
-      "minWidth": 40,
-      "download": false,
-      "formatter": "rowSelection",
-      "titleFormatter": "rowSelection",
-      "resizable": true,
-      "headerSort": false
-    },
-    {
       "field": "name:el",
       "title": "name:el",
-      "width": 128,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 787
     },
     {
       "field": "name:en",
       "title": "name:en",
-      "width": 171,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 787
     },
     {
       "field": "slug",
       "title": "slug",
-      "width": 117,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 241
     },
     {
       "field": "description",
       "title": "description",
-      "width": 32377,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 22267
     },
     {
       "field": "assets",
       "title": "assets",
-      "width": 5027,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 7215
     },
     {
       "field": "facets:el",
       "title": "facets:el",
-      "width": 3046,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 2209
     },
     {
       "field": "facets:en",
       "title": "facets:en",
-      "width": 3046,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 2209
     },
     {
       "field": "optionGroups",
       "title": "optionGroups",
-      "width": 142,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 142
     },
     {
       "field": "optionValues",
       "title": "optionValues",
-      "width": 2280,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 137
     },
     {
       "field": "sku",
       "title": "sku",
-      "width": 211,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 211
     },
     {
       "field": "price",
       "title": "price",
-      "width": 141,
       "minWidth": 40,
       "resizable": true,
       "sorter": "number",
-      "headerSort": true
+      "headerSort": true,
+      "width": 87
     },
     {
       "field": "taxCategory",
       "title": "taxCategory",
-      "width": 131,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 131
     },
     {
       "field": "stockOnHand",
       "title": "stockOnHand",
-      "width": 209,
       "minWidth": 40,
       "resizable": true,
       "sorter": "number",
-      "headerSort": true
+      "headerSort": true,
+      "width": 141
     },
     {
       "field": "product:car_url",
       "title": "product:car_url",
-      "width": 166,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 166
+    },
+    {
+      "field": "product:sku",
+      "title": "product:sku",
+      "minWidth": 40,
+      "resizable": true,
+      "sorter": "string",
+      "headerSort": true,
+      "width": 211
     },
     {
       "field": "trackInventory",
       "title": "trackInventory",
-      "width": 145,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 145
     },
     {
       "field": "variantAssets",
       "title": "variantAssets",
-      "width": 159,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
+      "headerSort": true,
+      "width": 137
     },
     {
       "field": "variantFacets",
       "title": "variantFacets",
-      "width": 136,
       "minWidth": 40,
       "resizable": true,
       "sorter": "string",
-      "headerSort": true
-    }
-  ],
-  "sort": [
-    {
-      "column": "name:el",
-      "dir": "asc"
+      "headerSort": true,
+      "width": 137
     }
   ]
 }

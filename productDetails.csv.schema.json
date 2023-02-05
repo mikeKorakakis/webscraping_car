@@ -71,6 +71,11 @@
       "format": "default"
     },
     {
+      "name": "product:sku",
+      "type": "string",
+      "format": "default"
+    },
+    {
       "name": "trackInventory",
       "type": "string",
       "format": "default"

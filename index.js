@@ -142,7 +142,7 @@ const processProductDetails = async (url) => {
 	price = (Number(price) / 1.24).toFixed(2);
 	const aftermarket_code = getValue("Εργοστασιακός κωδικός", selector);
 
-	const slug = `no_code_${slugify(title.substring(0, 30), { lower: true })}`;
+	const slug = slugify(title.substring(0, 30), { lower: true });
 	const description = getDescription(selector).replaceAll('"', "'");
 
 	const modelArr = [];
@@ -202,7 +202,7 @@ const processProductDetails = async (url) => {
 	// console.log("facets:en",facets)
 	// console.log("optionGroups",      )
 	// console.log("optionValues",    )
-	// console.log("sku",aftermarket_code)
+	console.log("sku",aftermarket_code)
 	// console.log("price",price)
 	// console.log("taxCategory",    )
 	// console.log("stockOnHand",100)
